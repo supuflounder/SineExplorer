@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SineWave", "SineWave.vcxproj", "{D4236973-B8C1-4930-9669-DC3148ACCFC3}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SineWaveSetup", "SineWaveSetup\SineWaveSetup.vdproj", "{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		Single Image 2|x64 = Single Image 2|x64
+		Single Image 2|x86 = Single Image 2|x86
+		Single Image|x64 = Single Image|x64
+		Single Image|x86 = Single Image|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Debug|x64.ActiveCfg = Debug|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Debug|x64.Build.0 = Debug|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Debug|x86.ActiveCfg = Debug|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Debug|x86.Build.0 = Debug|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Release|x64.ActiveCfg = Release|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Release|x64.Build.0 = Release|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Release|x86.ActiveCfg = Release|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Release|x86.Build.0 = Release|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image 2|x64.ActiveCfg = Single Image 2|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image 2|x64.Build.0 = Single Image 2|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image 2|x86.ActiveCfg = Single Image 2|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image 2|x86.Build.0 = Single Image 2|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image|x64.ActiveCfg = Single Image|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image|x64.Build.0 = Single Image|x64
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image|x86.ActiveCfg = Single Image|Win32
+		{D4236973-B8C1-4930-9669-DC3148ACCFC3}.Single Image|x86.Build.0 = Single Image|Win32
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Debug|x64.ActiveCfg = Debug
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Debug|x86.ActiveCfg = Debug
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Release|x64.ActiveCfg = Release
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Release|x86.ActiveCfg = Release
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Single Image 2|x64.ActiveCfg = Single Image 2
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Single Image 2|x86.ActiveCfg = Single Image 2
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Single Image 2|x86.Build.0 = Single Image 2
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Single Image|x64.ActiveCfg = Single Image
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Single Image|x86.ActiveCfg = Single Image
+		{24FF09C8-99E8-4088-B1D5-CF9EDE816ACF}.Single Image|x86.Build.0 = Single Image
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {368C4B8E-7CA1-484D-ADD5-588EBAFEA207}
+	EndGlobalSection
+EndGlobal
