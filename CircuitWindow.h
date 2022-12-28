@@ -10,13 +10,13 @@
 
 class CircuitWindow : public CStatic {
 protected:
-    void ACSourceOnly(CDC& dc);
-    void FullWave(CDC& dc);
-    void HalfWave(CDC& dc);
-    void DrawFrame(CDC& dc);
-    void SchmittCircuit(CDC& dc);
-    ACSource* DrawSource(CDC& dc);
-
+    void ACSourceOnly(CDC & dc);
+    void FullWave(CDC & dc);
+    void HalfWave(CDC & dc);
+    void DrawFrame(CDC & dc);
+    void SchmittCircuit(CDC & dc);
+    ACSource* DrawSource(CDC & dc);
+    void SetTextColor(CDC & dc);
 
 public:
     CircuitWindow() {

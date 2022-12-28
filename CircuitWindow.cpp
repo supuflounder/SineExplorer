@@ -274,7 +274,10 @@ int CircuitWindow::ShowValue(CDC & dc, CPoint pt, Value & Val, UINT position)
     return result;
     }
 
-
+void CircuitWindow::SetTextColor(CDC& dc)
+{
+    dc.SetTextColor(flashing : Colors::FlashWire : Colors::Wire);
+}
 
 void CircuitWindow::ShowX(CDC& dc, CPoint pt, UINT align)
 {
@@ -382,6 +385,7 @@ void CircuitWindow::SchmittCircuit(CDC& dc)
              Resistor R1(this, diode.GetP(1), Rcenter, flashing);
            
              Resistor R2(this, Rcenter, CPoint(diode.GetP(1).x, wire1.GetP(1).y), flashing);
+             dc.SetTextColor(flashing ? Colors::FlashWire : Colors::Wire);
 
              int R1val;
              int R2val;
@@ -520,6 +524,7 @@ void CircuitWindow::AnnotateCapacitor(CDC & dc, Capacitor & c, double Vin)
     CPoint right = c.GetP(4);
     CPoint center(left.x + (right.x - left.x) / 2, left.y);
     CPoint ptF(center.x - 2 , center.y - 2);
+    dc.SetTextColor(flashing : Colors::FlashWire : Colors::Wire);
     int height = ShowValue(dc, ptF, 
                                 Farads(Capacitance), 
                                 TA_TOP | TA_RIGHT);

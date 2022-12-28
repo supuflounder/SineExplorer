@@ -115,14 +115,13 @@ void Element::ShowConnection(CDC & dc, CPoint pt, COLORREF col)
     {
     static const int radius = 3;
     int n = dc.SaveDC();
-    CPen pen;
-    pen.CreatePen(PS_SOLID, 1, col);
-    dc.SelectObject(pen);
-    CBrush brush;
-    brush.CreateSolidBrush(col);
-    dc.SelectObject(brush);
+        FlashPen pen(flashing);
+        dc.SelectObject(pen);
+        CBrush brush;
+        brush.CreateSolidBrush(col);
+        dc.SelectObject(brush);
 
-    dc.Ellipse(pt.x - radius, pt.y - radius, pt.x + radius + 1, pt.y + radius + 1); // +1 for GDI "exclusive of" feature
+        dc.Ellipse(pt.x - radius, pt.y - radius, pt.x + radius + 1, pt.y + radius + 1); // +1 for GDI "exclusive of endpoint" feature
     dc.RestoreDC(n);
     }
 
@@ -250,34 +249,38 @@ void ACSource::draw(CDC & dc)
     double itemHeight = 0.6 * (double)r.Height();
     double circle = 0.2 * (double) r.Height();
     
-    dc.SelectStockObject(WHITE_BRUSH);
+    FlashBrush br(!flashing);  // Note the brush is the _complement_ of the flashing mode!
+    dc.SelectObject(br);
+  
     // Draw the circle
 
-    int radius = (int) (circle / 2.0);
-    dc.Ellipse( origin.x - radius,
-                origin.y - radius,
-                origin.x + radius,
-                origin.y + radius);
-    // Draw the sine wave in it
-    
-    static const int dtheta = 20;
-    static const int dx = (int) (0.75 * (double)radius);
-    static const int height = radius / 3;
+        FlashPen pen(flashing);
+        dc.SelectObject(pen);
 
-    CArray<CPoint> sine;
-    int x = origin.x - dx;
-    for(int i = 0; i <= 360; i += dtheta)
+        int radius = (int)(circle / 2.0);
+        dc.Ellipse(origin.x - radius,
+            origin.y - radius,
+            origin.x + radius,
+            origin.y + radius);
+        // Draw the sine wave in it
+
+        static const int dtheta = 20;
+        static const int dx = (int)(0.75 * (double)radius);
+        static const int height = radius / 3;
+
+        CArray<CPoint> sine;
+        int x = origin.x - dx;
+        for (int i = 0; i <= 360; i += dtheta)
         {
-         double rad = (((double) i) * M_PI) / 180.0;
-         double xm = sin(rad);
-         int y = origin.y - (int) (xm * height);
-         sine.Add(CPoint(x++, y));
-         //GDIFlash(dc, sine.GetAt(sine.GetCount() - 1));
+            double rad = (((double)i) * M_PI) / 180.0;
+            double xm = sin(rad);
+            int y = origin.y - (int)(xm * height);
+            sine.Add(CPoint(x++, y));
+            //GDIFlash(dc, sine.GetAt(sine.GetCount() - 1));
         }
-    // We have already drawn the solid white circle, so 
-    // we need a black pen
-    dc.SelectStockObject(BLACK_PEN);
-    dc.Polyline(&sine.GetAt(0), (int)sine.GetCount());
+     
+        dc.Polyline(&sine.GetAt(0), (int)sine.GetCount());
+    
     // Now, compute the output lines and their connection
     CPoint L0s;
     L0s.x = origin.x;
@@ -294,10 +297,6 @@ void ACSource::draw(CDC & dc)
     CPoint L1e;
     L1e.x = origin.x;
     L1e.y = origin.y + (int) (itemHeight / 2.0);
-
-    CPen pen;
-    pen.CreatePen(PS_SOLID, 1, flashing ? Colors::FlashWire : Colors::Wire);
-    dc.SelectObject(pen);
 
     dc.MoveTo(L0s);
     dc.LineTo(L0e);
@@ -350,10 +349,14 @@ void SimpleWire::draw(CDC & dc)
         return;
         }
     
-    //dc.SelectStockObject(BLACK_PEN);
-    dc.MoveTo(start);
-    GDICHECK(dc.LineTo(end));
-    GDIFLUSH();
+    int n = dc.SaveDC();
+        FlashPen pen(flashing);
+        dc.SelectObject(pen);
+
+        dc.MoveTo(start);
+        GDICHECK(dc.LineTo(end));
+        GDIFLUSH();
+    dc.RestoreDC(n);
 
     points.RemoveAll();
     points.Add(start);
@@ -391,10 +394,12 @@ void ComplexWire::draw(CDC & dc)
     points.RemoveAll();
     points.Add(start);
     points.Add(end);
+
     CPoint P2;
-    CPen pen;
-    pen.CreatePen(PS_SOLID, 1, flashing ? Colors::FlashWire : Colors::Wire);
+
+    FlashPen pen(flashing);
     dc.SelectObject(pen);
+
     switch(orient)
         { /* orient */
     case Orientation::Horizontal:
@@ -470,7 +475,9 @@ int Element::distance(CPoint p0, CPoint p1) const
     CRect r;
     wnd->GetClientRect(&r);
 
-    //dc.SelectStockObject(BLACK_PEN);
+    FlashPen pen(flashing);
+    dc.SelectObject(pen);
+
     dc.MoveTo(start);
     dc.LineTo(end);
     GDIFLUSH();
@@ -509,8 +516,7 @@ int Element::distance(CPoint p0, CPoint p1) const
     static const int cathode = anode / 2;               // Width of the cathode
     static const int height = (int) (0.05 * r.Height()); // Height of the anode/cathode
 
-    CBrush br;
-    br.CreateSolidBrush(flashing ? Colors::FlashWire : Colors::Wire);
+    FlashBrush br(flashing);
     dc.SelectObject(br);
     
 
@@ -583,7 +589,8 @@ void Capacitor::draw(CDC & dc)
     int mid = (end.y - start.y) / 2;
     CPoint L0e = CPoint(start.x, start.y + mid - plateSep);
     
-    dc.SelectStockObject(BLACK_PEN);
+    FlashPen pen(flashing);
+    dc.SelectObject(pen);
 
     dc.MoveTo(start); // Draw L0
     dc.LineTo(L0e);
@@ -719,14 +726,14 @@ void FullWaveRectifier::draw(CDC & dc)
     CPoint P3(center.x - size, center.y);
     points.Add(P3);
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
     // This just draws the lines and was used before we added diodes
     dc.MoveTo(P0);
     dc.LineTo(P2);
     dc.LineTo(P1);
     dc.LineTo(P3);
     dc.LineTo(P0);
-#endif
+//#endif
 
     Diode D1(wnd, P0, P2, flashing, Vf);  //  P0 --->|----P2
     D1.draw(dc);
@@ -787,7 +794,8 @@ void Regulator::draw(CDC & dc)
     int box1 = (int) (0.2 * (double) r.Width());
     int height = (int) (0.15 * (double) r.Width());
 
-    dc.SelectStockObject(BLACK_PEN);
+    FlashPen pen(flashing);
+    dc.SelectObject(pen);
 
     // We want the box to ideally be box1 width, but if box1 > len / 2,
     // we use box0 instead
@@ -838,7 +846,8 @@ void Regulator::draw(CDC & dc)
     Connect(dc, L3e, flashing);
     GDIFLUSH();
     
-    dc.SelectStockObject(WHITE_BRUSH);
+    FlashBrush br(flashing);
+    dc.SelectObject(br);
 
     CRect regBox(R0.x, R0.y, R0.x + box + 1, R0.y + height + 1);
     dc.Rectangle(regBox.left, regBox.top, regBox.right, regBox.bottom);
@@ -847,6 +856,8 @@ void Regulator::draw(CDC & dc)
     if(V > 0.0)
         { /* draw voltage */
         Value::SelectFont(dc, Value::DefaultFontHeight);
+        dc.SetTextColor(flashing ? Colors::FlashWire : Colors::Wire);
+
         dc.SetBkMode(TRANSPARENT);
         dc.DrawText(Volts(V, CString(_T("V"))).toString(), &regBox, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
         } /* draw voltage */
@@ -881,8 +892,7 @@ void Resistor::draw(CDC & dc)
     CRect r;
     wnd->GetClientRect(&r);
 
-     CPen pen;
-    pen.CreatePen(PS_SOLID, 1, flashing ? Colors::FlashWire : Colors::Wire);
+    FlashPen pen(flashing);
     dc.SelectObject(pen);
 
      /*******************************************************
@@ -976,14 +986,15 @@ void SchmittTrigger::draw(CDC& dc)
     CRect r;
     wnd->GetClientRect(&r);
 
-    dc.SelectStockObject(BLACK_PEN);
+    FlashPen pen(flashing);
+    dc.SelectObject(pen);
     /********************************************************************
     *   [0]start(x0,y0)                    [1]end(x1,y1)
     *      |              x0       x1 x2        |
     *      |              |    \   |  |         |
     *      |              |     \  |  |         |
     *      |              |      \ |  |         |
-    *      ____________[2]|  ____ \|/\|___________
+    *      ____________[2]|  ____ \|/\|__________
     *                     |_/_/   / \/
     *                     |      /
     *                     |     /

@@ -4,6 +4,8 @@
 * newcomer@flounder.com, must be retained in all derivative copies.
 *********************************************************************************/
 #pragma once
+#include "Colors.h"
+
 class Circuit {
 
     };
@@ -12,7 +14,8 @@ class Circuit {
 
 class Element {
 public:
-    Element(CWnd * w) { wnd = w; }
+    Element(CWnd* w) { wnd = w; flashing = false;  }
+    Element(CWnd* w, bool flashing) { wnd = w; this->flashing = flashing; }
     CWnd * wnd; 
     CPoint origin;
     virtual void draw(CDC& dc) PURE;
@@ -27,7 +30,17 @@ public:
     int distance(CPoint p0, CPoint p1) const;
     void rotate(CDC & dc, CPoint start, CPoint end, XFORM * M = NULL);
     static void GDIFlash(CDC & dc, CPoint pt);
-    }; // class Element
+
+    class FlashPen : public CPen {
+        public:
+        FlashPen(bool flashing) { CPen::CreatePen(PS_SOLID, 1, flashing ? Colors::FlashWire : Colors::Wire);  }
+        };
+    class FlashBrush : public CBrush {
+    public:
+        FlashBrush(bool flashing) { CBrush::CreateSolidBrush(flashing ? Colors::FlashWire : Colors::Wire);
+        }
+       };
+}; // class Element
 
 /*********************************************************************************
 *                          class ACSource
@@ -37,7 +50,7 @@ public:
 
 class ACSource : public Element {
 public:
-    ACSource(CWnd* w, bool flashing) : Element(w) { this->flashing = flashing;  }
+    ACSource(CWnd* w, bool flashing) : Element(w, flashing) { }
     virtual void draw(CDC & dc);
     };
 
@@ -58,16 +71,14 @@ enum class Orientation { Horizontal, Vertical, Any };
 ***********************************************************************************/
 class SimpleWire : public Element {
 public:
-    SimpleWire(CWnd * w, CPoint p, int len, bool flashing, Orientation or=Orientation::Horizontal) : Element(w)
+    SimpleWire(CWnd * w, CPoint p, int len, bool flashing, Orientation or=Orientation::Horizontal) : Element(w, flashing)
         {
         pt = p;
         orient = or;
         length = len;
-        this->flashing = flashing;
         }
-    SimpleWire(CWnd * w, CPoint s, CPoint e, bool flashing) : Element(w)
+    SimpleWire(CWnd * w, CPoint s, CPoint e, bool flashing) : Element(w, flashing)
         {
-        this->flashing = flashing;
         if(s.y == e.y)
             { /* horizontal */ 
             pt = s;
@@ -106,7 +117,7 @@ protected:
     CPoint end;
     Orientation orient;
 public:
-    ComplexWire(CWnd* w, CPoint p0, CPoint p1, Orientation dir, bool flashing) : Element(w) { start = p0; end = p1; orient = dir;  this->flashing = flashing;  }
+    ComplexWire(CWnd* w, CPoint p0, CPoint p1, Orientation dir, bool flashing) : Element(w, flashing) { start = p0; end = p1; orient = dir;  }
     virtual void draw(CDC & dc);
     };
 
@@ -118,9 +129,8 @@ public:
 class Diode : public Element {
 public:
     static const double DefaultVf; 
-    Diode(CWnd * w, CPoint start, CPoint end, bool flashing, double Vf = DefaultVf) : Element(w)
+    Diode(CWnd * w, CPoint start, CPoint end, bool flashing, double Vf = DefaultVf) : Element(w, flashing)
         {
-        this->flashing = flashing;
         this->start = start;
         this->end = end;
         this->Vf = Vf;
@@ -144,9 +154,8 @@ protected:
 ******************************************************************************************/
 class Capacitor : public Element {
 public:
-    Capacitor(CWnd * w, CPoint start, CPoint end, bool flashing) : Element(w)
+    Capacitor(CWnd * w, CPoint start, CPoint end, bool flashing) : Element(w, flashing)
         {
-        this->flashing = flashing;
         this->start = start;
         this->end = end;
         }
@@ -162,9 +171,8 @@ public:
 *****************************************************************************************/
 class FullWaveRectifier : public Element {
 public:
-    FullWaveRectifier(CWnd * w, CPoint center, int size, bool flashing, double Vf = Diode::DefaultVf) : Element(w)
+    FullWaveRectifier(CWnd * w, CPoint center, int size, bool flashing, double Vf = Diode::DefaultVf) : Element(w, flashing)
         {
-        this->flashing = flashing;
         this->center = center;
         this->size = size;
         this->Vf = Vf; 
@@ -184,9 +192,8 @@ protected:
 ******************************************************************************************/
 class Regulator : public Element {
 public:
-    Regulator(CWnd * w, CPoint start, CPoint end, CPoint ref, bool flashing, double V = 0.0) : Element(w)
+    Regulator(CWnd * w, CPoint start, CPoint end, CPoint ref, bool flashing, double V = 0.0) : Element(w, flashing)
         {
-        this->flashing = flashing;
         this->start = start;
         this->end = end;
         this->ref = ref;
@@ -209,9 +216,8 @@ protected:
 *****************************************************************************************/
 class Resistor : public Element {
 public:
-    Resistor(CWnd * w, CPoint start, CPoint end, bool flashing) : Element(w)
+    Resistor(CWnd * w, CPoint start, CPoint end, bool flashing) : Element(w, flashing)
         {
-        this->flashing = flashing;
         this->start = start;
         this->end = end;
         }
@@ -228,7 +234,7 @@ protected:
 *****************************************************************************************/
 class SchmittTrigger : public Element {
 public:
-    SchmittTrigger(CWnd * w, CPoint start, CPoint end, bool invert, bool flashing) : Element(w)
+    SchmittTrigger(CWnd * w, CPoint start, CPoint end, bool invert, bool flashing) : Element(w, flashing)
     {
         this->start = start;
         this->end = end;
