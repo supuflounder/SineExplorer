@@ -846,7 +846,7 @@ void Regulator::draw(CDC & dc)
     Connect(dc, L3e, flashing);
     GDIFLUSH();
     
-    FlashBrush br(flashing);
+    FlashBrush br(!flashing);
     dc.SelectObject(br);
 
     CRect regBox(R0.x, R0.y, R0.x + box + 1, R0.y + height + 1);
